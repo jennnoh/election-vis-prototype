@@ -1,10 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <meta charset="UTF-8" />
+  <title>Election Polling – Axis Range Demo</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  <!-- noUiSlider (for dual-handle sliders) -->
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
+
+  <!-- D3 + topojson for Page 3 -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
 </head>
 <body>
-$END$
+<!-- PAGE 1 -->
+<div id="page-1" class="page">
+  <h1>Election Polling by Party</h1>
+  <p class="subtitle">
+    Use the sliders to change the visible years (x-axis) and the polls (y-axis) range.
+  </p>
+
+  <div class="chart-area">
+    <!-- Y-axis range slider (one control with two handles) -->
+    <div class="y-control">
+      <div class="axis-label">
+        Polls range (millions)<br>
+        <span id="yRangeLabel"></span>
+      </div>
+      <div id="yRangeSlider" class="vertical-slider"></div>
+    </div>
+
+    <!-- Chart + X-axis slider underneath -->
+    <div class="chart-wrapper">
+      <canvas id="pollChart" width="700" height="400"></canvas>
+
+      <div class="x-control">
+        <div class="axis-label">
+          Year range:
+          <span id="xRangeLabel"></span>
+        </div>
+        <div id="xRangeSlider" class="horizontal-slider"></div>
+      </div>
+    </div>
+  </div>
+
+  <button id="next-page-btn" class="nav-btn">Next page ▶</button>
+</div>
+
+<!-- PAGE 2: binning / histogram app -->
+<div id="page-2" class="page hidden">
+  <h1>Vote Share by Median Income</h1>
+  <p class="subtitle">
+    Adjust the number and positions of income bins!
+  </p>
+
+  <div class="controls">
+    <label for="binCountInput">
+      Bin count:
+      <input id="binCountInput" type="number" min="1" max="8" value="3" />
+    </label>
+    <span class="bin-note">
+      Drag the markers below to move the income bin boundaries.
+    </span>
+  </div>
+
+  <div class="chart-area">
+    <div class="chart-wrapper">
+      <canvas id="histChart" width="700" height="400"></canvas>
+
+      <!-- Slider controlling bin boundaries -->
+      <div class="x-control">
+        <div class="axis-label">Income bins:</div>
+        <div id="binBoundarySlider" class="horizontal-slider"></div>
+      </div>
+    </div>
+  </div>
+
+  <button id="back-page-btn" class="nav-btn">◀ Back</button>
+  <button id="next-to-page3" class="nav-btn">Next page ▶</button>
+</div>
+
+<!-- PAGE 3: land doesn't vote -->
+<div id="page3" class="page hidden">
+  <h1>Land Doesn’t Vote</h1>
+  <p class="subtitle">
+    Use the slider to move from land area
+    to equal circles, population, and non-geographic layouts.
+  </p>
+
+  <div class="chart-area">
+    <div class="chart-wrapper">
+      <div id="map3-container"></div>
+
+      <div class="x-control" style="margin-top: 16px; width: 700px;">
+        <div class="axis-label">
+          View:
+          <span id="mode3-label"></span>
+        </div>
+        <input
+                id="mode3-slider"
+                type="range"
+                min="0"
+                max="4"
+                step="1"
+                value="0"
+                style="width: 100%;"
+        />
+        <div class="mode3-ticks">
+          <span>Districts</span>
+          <span>Equal circles</span>
+          <span>Size + shade</span>
+          <span>Beeswarm margin</span>
+          <span>Beeswarm regions</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button id="back-to-page2" class="nav-btn">◀ Back</button>
+</div>
+
+
+
+<!-- Shared data + JS -->
+<script src="data/pollingData.js"></script>
+<script src="data/incomeVotes.js"></script>
+<script src="data/landVotesData.js"></script>
+<script src="js/app_page1.js"></script>
+<script src="js/app_page2.js"></script>
+<script src="js/app_page3.js"></script>
+<script src="js/nav.js"></script>
 </body>
 </html>

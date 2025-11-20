@@ -1,3 +1,6 @@
+// js/app_page1.js
+// Page 1: axis truncation demo for polling over time
+
 // === DOM elements ===
 const ctx = document.getElementById("pollChart").getContext("2d");
 const xRangeSliderEl = document.getElementById("xRangeSlider");
@@ -12,10 +15,17 @@ const nYears = pollingYears.length;
 const Y_MIN_ALLOWED = 0;
 const Y_MAX_ALLOWED = 85;
 
-// initial state
-let xMinIndex = 0;
-let xMaxIndex = nYears - 1;
-let yMin = 0;
+// --- initial state (updated) ---
+// years: [1996, 2000, 2004, 2008, 2012, 2016, 2020, 2024]
+let xMinIndex = pollingYears.indexOf(2012);
+let xMaxIndex = pollingYears.indexOf(2024);
+
+// fallback just in case
+if (xMinIndex === -1) xMinIndex = 0;
+if (xMaxIndex === -1) xMaxIndex = nYears - 1;
+
+// default y-axis from 55 to 85
+let yMin = 55;
 let yMax = 85;
 
 // === helper: datasets for current x-range ===
@@ -97,50 +107,56 @@ function updateChart() {
 // === Create dual-handle sliders with noUiSlider ===
 
 // X-axis: indices into pollingYears
-noUiSlider.create(xRangeSliderEl, {
-    start: [0, nYears - 1],
-    step: 1,
-    connect: true,
-    range: {
-        min: 0,
-        max: nYears - 1
-    },
-    format: {
-        to: value => Math.round(value),
-        from: value => Number(value)
-    }
-});
+if (xRangeSliderEl) {
+    noUiSlider.create(xRangeSliderEl, {
+        start: [xMinIndex, xMaxIndex], // default 2012–2024
+        step: 1,
+        connect: true,
+        range: {
+            min: 0,
+            max: nYears - 1
+        },
+        format: {
+            to: value => Math.round(value),
+            from: value => Number(value)
+        }
+    });
+
+    // Slider events
+    xRangeSliderEl.noUiSlider.on("update", (values) => {
+        xMinIndex = Math.min(+values[0], +values[1]);
+        xMaxIndex = Math.max(+values[0], +values[1]);
+        updateLabels();
+        updateChart();
+    });
+} else {
+    console.warn("app_page1: #xRangeSlider not found");
+}
 
 // Y-axis: actual poll values (millions)
-noUiSlider.create(yRangeSliderEl, {
-    start: [yMin, yMax],
-    step: 1,
-    connect: true,
-    orientation: "vertical",
-    direction: "rtl", // so lower values are at bottom visually
-    range: {
-        min: Y_MIN_ALLOWED,
-        max: Y_MAX_ALLOWED
-    }
-});
+if (yRangeSliderEl) {
+    noUiSlider.create(yRangeSliderEl, {
+        start: [yMin, yMax], // default 55–85
+        step: 1,
+        connect: true,
+        orientation: "vertical",
+        direction: "rtl", // so lower values are at bottom visually
+        range: {
+            min: Y_MIN_ALLOWED,
+            max: Y_MAX_ALLOWED
+        }
+    });
 
-// Slider events
-xRangeSliderEl.noUiSlider.on("update", (values) => {
-    // values come as strings, already rounded by format
-    xMinIndex = Math.min(+values[0], +values[1]);
-    xMaxIndex = Math.max(+values[0], +values[1]);
-    updateLabels();
-    updateChart();
-});
-
-yRangeSliderEl.noUiSlider.on("update", (values) => {
-    yMin = Math.min(+values[0], +values[1]);
-    yMax = Math.max(+values[0], +values[1]);
-    updateLabels();
-    updateChart();
-});
+    yRangeSliderEl.noUiSlider.on("update", (values) => {
+        yMin = Math.min(+values[0], +values[1]);
+        yMax = Math.max(+values[0], +values[1]);
+        updateLabels();
+        updateChart();
+    });
+} else {
+    console.warn("app_page1: #yRangeSlider not found");
+}
 
 // initial text + chart
 updateLabels();
 updateChart();
-

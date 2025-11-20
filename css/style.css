@@ -1,0 +1,172 @@
+* {
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #fafafa;
+    color: #222;
+}
+
+.page {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 20px 40px;
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+.chart-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Y-axis slider on the left (page 1) */
+.y-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 18px;
+}
+
+.y-control .axis-label {
+    font-size: 0.8rem;
+    text-align: center;
+    margin-bottom: 18px;  /* space above the vertical slider */
+}
+
+.axis-label {
+    font-size: 0.8rem;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+#yRangeLabel,
+#xRangeLabel,
+#yRangeLabel2,
+#xRangeLabel2 {
+    font-weight: 600;
+}
+
+/* noUiSlider tweaks */
+.vertical-slider {
+    height: 260px;
+    width: 12px;
+}
+
+.horizontal-slider {
+    margin-top: 8px;
+}
+
+.noUi-vertical {
+    height: 260px;
+}
+
+/* Chart + x-axis slider */
+.chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.x-control {
+    width: 700px; /* match canvas width */
+    margin-top: 10px;
+}
+
+/* Navigation buttons */
+.nav-btn {
+    margin-top: 24px;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+}
+
+/* Small-screen tweaks */
+@media (max-width: 768px) {
+    .chart-area {
+        flex-direction: column;
+    }
+
+    .y-control {
+        flex-direction: row;
+        margin-bottom: 14px;
+        margin-right: 0;
+    }
+
+    .vertical-slider {
+        height: 200px;
+        margin-left: 10px;
+    }
+
+    .x-control {
+        width: 100%;
+    }
+}
+/* Page 2 controls */
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+}
+
+.controls input[type="number"] {
+    width: 60px;
+    padding: 2px 4px;
+}
+
+.bin-note {
+    color: #666;
+}
+
+/* Make the multi-handle slider wide enough for bins */
+#binBoundarySlider {
+    width: 700px; /* matches canvas width */
+}
+
+.noUi-target {
+    background: #f5f5f5;      /* or #f5f5f5 */
+    border-radius: 999px;
+    border: 1px solid #ccc;
+}
+
+.noUi-connects .noUi-connect {
+    background: #ffffff !important;  /* match the track */
+}
+
+#map3-container svg {
+    background: #49485b; /* same dark-ish background idea */
+    border-radius: 8px;
+}
+
+.mode3-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #666;
+    margin-top: 4px;
+}
+
