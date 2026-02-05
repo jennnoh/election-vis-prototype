@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VizTown Election Game</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+</head>
+
+<body>
+  <main class="game">
+    <!-- 0) Start -->
+    <section class="slide" id="start" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h1>VizTown Election Game</h1>
+          <p class="subtitle">You're a data journalist covering an election cycle. Your charts will shape what people
+            believe.</p>
+
+
+          <div class="panel">
+            <div class="step bubble left"><strong>Welcome to VizTown! </strong> You're the newsroom's data journalist
+              covering election season.</div>
+            <div class="step bubble left">In each scene, you'll <strong>explore data</strong>, <strong>choose how to
+                visualize it</strong>, and then <strong>publish</strong>.</div>
+            <div class="step bubble left">Your choices affect what people believe and what shows up <em>days
+                later</em> on the VizTown Timeline.</div>
+            <div class="step bubble left"><strong>How to play:</strong> click anywhere to reveal dialogue. When the
+              <strong>Next</strong> button lights up, you can move on.
+            </div>
+          </div>
+
+          <div class="hint">🖱️ Click anywhere to continue</div>
+
+          <div class="cast">
+            <div class="cast-card">
+              <img src="assets/characters/data_journalist/neutral.png" alt="Data journalist" />
+              <div><strong>You</strong><br /><span>Data journalist</span></div>
+            </div>
+            <div class="cast-card">
+              <img src="assets/characters/editor/neutral.png" alt="Editor" />
+              <div><strong>Editor</strong><br /><span>Wants a strong story</span></div>
+            </div>
+            <div class="cast-card">
+              <img src="assets/characters/wizard/neutral.png" alt="Wizard" />
+              <div><strong>Wizard</strong><br /><span>Reveals outcomes</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="slide" id="background">
+      <div class="frame">
+        <h1 class="title">Before you start</h1>
+        <p class="subtitle">
+          Quick context for VizTown so your choices feel real.
+        </p>
+        <div class="card" style="padding:18px;">
+          <h2 style="margin:0 0 10px;">Parties & candidates</h2>
+          <ul style="margin:0 0 14px; line-height:1.5;">
+            <li>🟣 <b>Purple Party</b> (Jenny): strong in big cities and younger voters.</li>
+            <li>🟢 <b>Green Party</b> (Matthew): strong in rural districts and older voters.</li>
+          </ul>
+          <h2 style="margin:12px 0 10px;">What the "polling history" means</h2>
+          <p style="margin:0; line-height:1.5;">
+            This is a made-up trend from a past election. Your job is to choose how to show it.
+            Small design choices can change what people take away.
+          </p>
+        </div>
+
+
+      </div>
+    </section>
+
+
+    <!-- Scene 1 title -->
+    <section class="slide hidden title-screen" id="s1-title">
+      <div class="content center">
+        <div class="scroll">
+          <h2>Scene 1</h2>
+          <h1>Pre-Election</h1>
+          <h2>"Framing the Polls"</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 1 dialogue -->
+    <section class="slide hidden" id="s1-dialogue" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>🗞️ Newsroom</h2>
+
+          <div class="scene-row">
+            <img class="avatar" src="assets/characters/editor/neutral.png" alt="Editor" />
+            <div class="panel">
+              <div class="step bubble left"><strong>Editor:</strong> Alright, we're about a month out. I want a chart showing how support has
+                shifted over time.</div>
+              <div class="step bubble left"><strong>Editor:</strong> Here's the draft. The changes look kinda small... See if you can make it
+                feel
+                more dramatic!</div>
+            </div>
+          </div>
+
+          <div class="scene-row right">
+            <img class="avatar" src="assets/characters/data_journalist/neutral.png" alt="You" />
+            <div class="panel">
+              <div class="step bubble right"><strong>You:</strong> Ok. I'll see what I can do.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 1 interact -->
+    <section class="slide hidden" id="s1-interact" data-next-disabled="true">
+      <div class="content">
+        <div class="scroll">
+          <h2>Make the polling chart</h2>
+          <p class="subtitle">Adjust the visible years and the polls range, then publish.</p>
+
+          <div class="chart-area">
+            <div class="y-control">
+              <div class="axis-label">
+                Polls range (millions)<br>
+                <span id="yRangeLabel"></span>
+              </div>
+              <div id="yRangeSlider" class="vertical-slider"></div>
+            </div>
+
+            <div class="chart-wrapper">
+              <canvas id="pollChart" width="560" height="300"></canvas>
+
+              <div class="x-control">
+                <div class="axis-label">
+                  Year range:
+                  <span id="xRangeLabel"></span>
+                </div>
+                <div id="xRangeSlider" class="horizontal-slider"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" data-action="publish_s1">Publish</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 1 immediate -->
+    <section class="slide hidden" id="s1-immediate" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>In the newsroom</h2>
+          <div class="panel" id="s1-immediate-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 1 feed now -->
+    <section class="slide hidden" id="s1-feed-now" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>📣 VizTown Timeline</h2>
+          <div class="panel" id="s1-feed-now-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 1 gap -->
+    <section class="slide hidden title-screen" id="s1-gap">
+      <div class="content center">
+        <div class="scroll">
+          <h1>A FEW DAYS LATER...</h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 1 feed later -->
+    <section class="slide hidden" id="s1-feed-later" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>⏳ Later on your timeline...</h2>
+          <div class="panel" id="s1-feed-later-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 2 title -->
+    <section class="slide hidden title-screen" id="s2-title">
+      <div class="content center">
+        <div class="scroll">
+          <h2>Scene 2</h2>
+          <h1>Election Night</h1>
+          <h2>"Call the Race"</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 2 dialogue -->
+    <section class="slide hidden" id="s2-dialogue" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>🗞️ Newsroom</h2>
+          <div class="scene-row">
+            <img class="avatar" src="assets/characters/editor/neutral.png" alt="Editor" />
+            <div class="panel">
+              <div class="step bubble left"><strong>Editor:</strong> We're going live. Watch the map and the count.</div>
+              <div class="step bubble left"><strong>Editor:</strong> Other broadcasters will make their calls too. Call it when you think the
+                data is reliable.</div>
+            </div>
+          </div>
+          <div class="scene-row right">
+            <img class="avatar" src="assets/characters/data_journalist/neutral.png" alt="You" />
+            <div class="panel">
+              <div class="step bubble right"><strong>You:</strong> Got it. I'll call when I'm confident.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 2 live -->
+    <section class="slide hidden" id="scene2-live" data-next-disabled="true">
+      <div class="content">
+        <div class="scroll">
+          <h2>LIVE: Election Night</h2>
+          <p class="subtitle">Watch districts flip as votes come in. Call the winner when you're ready.</p>
+
+          <div class="livebox">
+            <div class="scene2-overlay" id="s2-overlay">
+              <div class="scene2-overlay-card">
+                <h3>What you are trying to do</h3>
+                <p>Watch the results come in, then click when you are ready to call a winner.</p>
+                <button class="btn primary" id="s2-start">Start the live feed</button>
+              </div>
+            </div>
+            <div class="live-panel">
+              <h3>Broadcast desk</h3>
+
+              <div class="kpi-row">
+                <div class="kpi"><strong>Timer:</strong> <span class="big" id="s2-timer">00:00 / 01:00</span></div>
+                <div class="kpi"><strong>Votes reported:</strong> <span class="big" id="s2-pct">20%</span></div>
+                <div class="kpi"><strong>Live split:</strong> <span class="big" id="s2-live-split">Purple Party 44.0% · Green Party
+                    56.0%</span></div>
+              </div>
+
+              <div class="callbox">
+                <div class="label"><strong>Call the race?</strong></div>
+                <div class="call-actions">
+                  <button class="btn" id="s2-call-matthew">Call: Green Party</button>
+                  <button class="btn" id="s2-call-jenny">Call: Purple Party</button>
+                </div>
+                <div class="small-note" id="s2-status">Instruction: call a winner when you are ready.</div>
+              </div>
+            </div>
+
+            <div class="live-viz">
+              <div id="scene2-map"></div>
+
+              <div id="s2-bbt" class="announcer-pop hidden">
+                <div class="announcer-card">
+                  <div class="announcer-face">🎙️</div>
+                  <div>
+                    <div class="announcer-tag">BBT News</div>
+                    <div class="announcer-bubble">Breaking: with early results, BBT projects <strong>Green
+                        Party</strong> will win.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="s2-abg" class="announcer-pop abg hidden">
+                <div class="announcer-card">
+                  <div class="announcer-face">🎙️</div>
+                  <div>
+                    <div class="announcer-tag">ABG Live</div>
+                    <div class="announcer-bubble">Update: ABG projects <strong>Purple Party</strong> will win as urban
+                      returns come in.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 2 immediate -->
+    <section class="slide hidden" id="s2-immediate" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>In the newsroom</h2>
+          <div class="panel" id="s2-immediate-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 2 feed now -->
+    <section class="slide hidden" id="s2-feed-now" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>📣 VizTown Timeline</h2>
+          <div class="panel" id="s2-feed-now-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 2 gap -->
+    <section class="slide hidden title-screen" id="s2-gap">
+      <div class="content center">
+        <div class="scroll">
+          <h1>A FEW DAYS LATER...</h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 2 feed later -->
+    <section class="slide hidden" id="s2-feed-later" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>⏳ Later on your timeline...</h2>
+          <div class="panel" id="s2-feed-later-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 3 title -->
+    <section class="slide hidden title-screen" id="s3-title">
+      <div class="content center">
+        <div class="scroll">
+          <h2>Scene 3</h2>
+          <h1>Post-Election</h1>
+          <h2>"Land Doesn't Vote"</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 3 dialogue -->
+    <section class="slide hidden" id="s3-dialogue" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>🗞️ Newsroom</h2>
+          <div class="scene-row">
+            <img class="avatar" src="assets/characters/editor/neutral.png" alt="Editor" />
+            <div class="panel">
+              <div class="step bubble left"><strong>Editor:</strong> People are sharing a map that looks like a massive GREEN landslide.</div>
+              <div class="step bubble left"><strong>Editor:</strong> But the vote totals say Purple actually won.</div>
+              <div class="step bubble left"><strong>Editor:</strong> Publish something that explains what the map hides... without sounding
+                preachy.</div>
+            </div>
+          </div>
+          <div class="scene-row right">
+            <img class="avatar" src="assets/characters/data_journalist/neutral.png" alt="You" />
+            <div class="panel">
+              <div class="step bubble right"><strong>You:</strong> Ok. I'll try a view that matches voters, not land.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 3 interact -->
+    <section class="slide hidden" id="s3-interact" data-next-disabled="true">
+      <div class="content">
+        <div class="scroll">
+          <div class="s3-header">
+            <h2>Reframe the map</h2>
+            <p class="subtitle">Move the slider. Try a few views. Publish when you think it's clearest.</p>
+          </div>
+
+          <div class="chart-area">
+            <div class="chart-wrapper">
+              <div id="map3-container"></div>
+              <div class="x-control" style="margin-top: 16px; width: 700px;">
+                <div class="axis-label">View: <span id="mode3-label"></span></div>
+                <input id="mode3-slider" type="range" min="0" max="4" step="1" value="0" style="width: 100%;" />
+                <div class="mode3-ticks">
+                  <span>Districts</span><span>Equal circles</span><span>Size +
+                    shade</span><span>Beeswarm</span><span>Regions</span>
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn primary" data-action="publish_s3">Publish</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 3 immediate -->
+    <section class="slide hidden" id="s3-immediate" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>In the newsroom</h2>
+          <div class="panel" id="s3-immediate-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 3 feed now -->
+    <section class="slide hidden" id="s3-feed-now" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>📣 VizTown Timeline</h2>
+          <div class="panel" id="s3-feed-now-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 3 gap -->
+    <section class="slide hidden title-screen" id="s3-gap">
+      <div class="content center">
+        <div class="scroll">
+          <h1>A FEW DAYS LATER...</h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 3 feed later -->
+    <section class="slide hidden" id="s3-feed-later" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>⏳ Later on your timeline...</h2>
+          <div class="panel" id="s3-feed-later-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 4 title -->
+    <section class="slide hidden title-screen" id="s4-title">
+      <div class="content center">
+        <div class="scroll">
+          <h2>Scene 4</h2>
+          <h1>Post-Election</h1>
+          <h2>"Aggregation"</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 4 dialogue -->
+    <section class="slide hidden" id="s4-dialogue" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>🗞️ Newsroom</h2>
+          <div class="scene-row">
+            <img class="avatar" src="assets/characters/editor/neutral.png" alt="Editor" />
+            <div class="panel">
+              <div class="step bubble left"><strong>Editor:</strong> People keep arguing: income explains everything.</div>
+              <div class="step bubble left"><strong>Editor:</strong> Publish a chart that shows the pattern</div>
+              <div class="step bubble left"><strong>Editor:</strong> without smoothing away the reversal in the middle.</div>
+            </div>
+          </div>
+          <div class="scene-row right">
+            <img class="avatar" src="assets/characters/data_journalist/neutral.png" alt="You" />
+            <div class="panel">
+              <div class="step bubble right"><strong>You:</strong> Ok. I'll pick a bin count that actually tells the story.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 4 interact -->
+    <section class="slide hidden" id="s4-interact" data-next-disabled="true">
+      <div class="content">
+        <div class="scroll">
+          <h2>Pick a bin count</h2>
+          <p class="subtitle">Change the bin count, then publish.</p>
+
+          <div class="controls">
+            <label for="binCountInput">Bin count:
+              <input id="binCountInput" type="number" min="1" max="8" value="3" />
+            </label>
+            <span class="bin-note">More bins != better. You're choosing how much to aggregate.</span>
+          </div>
+
+          <div class="chart-area">
+            <div class="chart-wrapper">
+              <canvas id="histChart" width="560" height="300"></canvas>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" data-action="publish_s4">Publish</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 4 immediate -->
+    <section class="slide hidden" id="s4-immediate" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>In the newsroom</h2>
+          <div class="panel" id="s4-immediate-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 4 feed now -->
+    <section class="slide hidden" id="s4-feed-now" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>📣 VizTown Timeline</h2>
+          <div class="panel" id="s4-feed-now-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 4 gap -->
+    <section class="slide hidden title-screen" id="s4-gap">
+      <div class="content center">
+        <div class="scroll">
+          <h1>A FEW DAYS LATER...</h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 4 feed later -->
+    <section class="slide hidden" id="s4-feed-later" data-reveal="button">
+      <div class="content">
+        <div class="scroll">
+          <h2>⏳ Later on your timeline...</h2>
+          <div class="panel" id="s4-feed-later-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section class="slide hidden" id="dashboard-slide">
+      <div class="content">
+        <div class="scroll">
+          <div class="dashboard-header">
+            <h2>📊 Your newsroom recap</h2>
+            <button class="btn btn-dark" id="restart-game">Play again</button>
+          </div>
+          <p class="subtitle">Here's what you published and how it played out.</p>
+          <div id="dashboard"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <div id="bottom-nav">
+      <button id="nav-prev" aria-label="Back">&#9664; Back</button>
+      <button id="nav-next" aria-label="Next">Next &#9654;</button>
+    </div>
+
+  </main>
+
+  <script src="data/pollingData.js"></script>
+  <script src="data/incomeVotes.js"></script>
+  <script src="data/landVotesData.js"></script>
+
+  <script src="js/app_page1.js"></script>
+  <script src="js/app_page2.js"></script>
+  <script src="js/app_page3.js"></script>
+  <script src="js/app_scene2_callrace.js"></script>
+  <script src="js/game.js"></script>
+</body>
+
+</html>
